@@ -43,14 +43,16 @@ def load_in_range(wavelength='all', start='01/01/2019', end='01/01/2020'):
         date_strings.append(current_date.strftime("%Y%m%d"))
         current_date += datetime.timedelta(days=1)
 
-    # Get list of files for a given wavelength
-    file_list = np.asarray(os.listdir(IMAGE_DIR))
+    # Get alphabetically sorted list of files
+    file_list = np.asarray(sorted(os.listdir(IMAGE_DIR)))
+    # Take slice of list for specific wavelengths
+    third = int(file_list.size / 3)
     if wavelength == 'IR16':
-        file_list = file_list[np.char.startswith(file_list, 'IR16')]
+        file_list = file_list[: third]
     if wavelength == 'VIS6':
-        file_list = file_list[np.char.startswith(file_list, 'VIS6')]
+        file_list = file_list[third: 2 * third]
     if wavelength == 'VIS8':
-        file_list = file_list[np.char.startswith(file_list, 'VIS8')]
+        file_list = file_list[2 * third:]
 
     # Get file names from file_list which contain a date from date_stings
     matching_files = [fname for fname in file_list if
@@ -63,4 +65,6 @@ def load_in_range(wavelength='all', start='01/01/2019', end='01/01/2020'):
         images.append(image)
 
     return np.asarray(images)
+    # Could be useful to send the filenames also. Might swich to this later.
+    # return np.asarray(images), matching_files
 
