@@ -77,6 +77,9 @@ for i in range(len(R)):
     cloud_removed.append(col)
     
 #%%
+#convert to array
+cloud_removed1 = np.array(cloud_removed)
+clouds1 = np.array(clouds)
 
 #plt.figure()
 #plt.imshow(cloud_removed[0])
