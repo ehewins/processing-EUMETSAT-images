@@ -81,6 +81,14 @@ for i in range(len(R)):
 cloud_removed1 = np.array(cloud_removed)
 clouds1 = np.array(clouds)
 
+
+clouds2 =[]
+
+for i in range(len(clouds)):
+    img = clouds[i]
+    img = np.array(img/img.max(),dtype=np.uint8)
+    clouds2.append(img)
+
 #plt.figure()
 #plt.imshow(cloud_removed[0])
 
