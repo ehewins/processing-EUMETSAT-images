@@ -1,6 +1,8 @@
+import os
+from datetime import datetime, timedelta
+
 import numpy as np
 import matplotlib.pyplot as plt
-# from matplotlib.colors import LogNorm
 
 import file_selection
 
@@ -29,29 +31,21 @@ def weighted_time_average(window, p=4):
     return weighted_avg
 
 
-START, END = '01/01/2019', '07/01/2019'
-colour = np.stack((file_selection.load_in_range('all', START, END)), axis=-1)
+RESULTS_DIR = 'cloud_free_images'
 
-p = 4  # power the reciprocal is raised to during weighting.
-window_size = 5  # number of images averaged over during rolling average
-array = colour
-array_size = array.shape[0]
-rolling_average = np.empty((0, *array.shape[1:]))
-for i in range(array_size):
-    window_start = max(i - (window_size - 1) // 2, 0)
-    window_end = min(i + (window_size - 1) // 2, array_size)
-    in_window = array[window_start: window_end + 1]
-    weighted_average = weighted_time_average(in_window, p)
-    rolling_average = np.append(rolling_average, [weighted_average], axis=0)
+# Define week-long time intervals to average over
+week_dates = []
+start_date = datetime(2019, 1, 1)
+end_date = datetime(2020, 1, 1)
+current_date = start_date
+while current_date < end_date:
+    week_dates.append(current_date)
+    current_date += timedelta(weeks=1)
 
-# Display before/after of the image from the middle of the timespan
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
-ax1.imshow(array[7])
-# Must be uint8 to display image properly
-ax2.imshow(rolling_average[7].astype(np.uint8))
-for ax in (ax1, ax2):
-    ax.set_axis_off()
-ax1.set_title("Original image")
-ax2.set_title("Rolling time average with window size {:d}".format(window_size))
-
-plt.show()
+for w in range(len(week_dates) - 1):
+    time_window = file_selection.load_datetimes_three_colour(week_dates[w],
+                                                             week_dates[w + 1])
+    weighted_average = weighted_time_average(time_window)
+    plt.imsave(os.path.join(RESULTS_DIR, "week_{:d}.png".format(w)),
+               weighted_average.astype(np.uint8))
+    print("Saved image for week {:d}".format(w))
