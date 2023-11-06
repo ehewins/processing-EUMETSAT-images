@@ -45,6 +45,6 @@ RESULTS_DIR = 'cloud_free_images'
 for w in range(52):
     time_window = file_selection.load_by_week(week=w)
     weighted_average = weighted_time_average(time_window)
-    plt.imsave(os.path.join(RESULTS_DIR, "week_{:d}.png".format(w)),
+    plt.imsave(os.path.join(RESULTS_DIR, "week_{:d}.jpg".format(w)),
                weighted_average.astype(np.uint8))
     print("Saved image for week {:d}".format(w))
