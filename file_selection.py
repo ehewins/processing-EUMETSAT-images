@@ -3,7 +3,7 @@ This program loads which files for the data analysis process to use.
 """
 
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 # These two lines fix a problem with some images not loading properly
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -136,3 +136,42 @@ def load_datetimes_three_colour(start, end):
         colour_images.append(image)
 
     return np.asarray(colour_images).astype(np.uint8)
+
+
+def load_by_week(week, separate=False):
+    """
+    This function loads an array of images files based on week number, ranging
+    from 0 to 51. The 'separate' parameter, if set to true, causes the images
+    to be sent in separate arrays for each colour channel rather than the
+    default of colour images.
+    """
+    if week < 0 or week > 51:
+        raise ValueError("Param. 'week' must have a value between 0 and 51.")
+    if not isinstance(week, int):
+        raise TypeError("Param. 'week' must be an integer.")
+
+    start = MIN_DATE + timedelta(weeks=week)
+    end = MIN_DATE + timedelta(weeks=week + 1)
+
+    # Get all filenames and dates and store ones from the desired time interval
+    file_list, timestamp_list = sorted_filenames_and_dates()
+    file_list = file_list[(timestamp_list >= start) & (timestamp_list < end)]
+    IR16_files, VIS6_files, VIS8_files = np.array_split(file_list, 3)
+
+    colour_images = []
+    for n in range(len(file_list) // 3):
+        # Load three monochrome image files into one colour image
+        image = np.stack((
+            plt.imread(os.path.join(IMAGE_DIR, IR16_files[n])),
+            plt.imread(os.path.join(IMAGE_DIR, VIS8_files[n])),
+            plt.imread(os.path.join(IMAGE_DIR, VIS6_files[n]))), axis=-1)
+        colour_images.append(image)
+    colour_images = np.asarray(colour_images)
+
+    if separate is True:
+        R = colour_images[:, :, :, 0].astype(np.uint8)
+        G = colour_images[:, :, :, 1].astype(np.uint8)
+        B = colour_images[:, :, :, 2].astype(np.uint8)
+        return R, G, B
+
+    return colour_images.astype(np.uint8)
