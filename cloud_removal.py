@@ -33,18 +33,17 @@ def weighted_time_average(window, p=4):
 
 RESULTS_DIR = 'cloud_free_images'
 
-# Define week-long time intervals to average over
-week_dates = []
-start_date = datetime(2019, 1, 1)
-end_date = datetime(2020, 1, 1)
-current_date = start_date
-while current_date < end_date:
-    week_dates.append(current_date)
-    current_date += timedelta(weeks=1)
+# # Define week-long time intervals to average over
+# week_dates = []
+# start_date = datetime(2019, 1, 1)
+# end_date = datetime(2020, 1, 1)
+# current_date = start_date
+# while current_date < end_date:
+#     week_dates.append(current_date)
+#     current_date += timedelta(weeks=1)
 
-for w in range(len(week_dates) - 1):
-    time_window = file_selection.load_datetimes_three_colour(week_dates[w],
-                                                             week_dates[w + 1])
+for w in range(52):
+    time_window = file_selection.load_by_week(week=w)
     weighted_average = weighted_time_average(time_window)
     plt.imsave(os.path.join(RESULTS_DIR, "week_{:d}.png".format(w)),
                weighted_average.astype(np.uint8))
