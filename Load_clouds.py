@@ -50,10 +50,10 @@ def clouds(week):
     
         #second segment, south pole, notable change in blue and green
         b_seg2 = blue[3000:3712,0:3712]
-        blue2 = cv2.inRange(b_seg2, 80, 255)
+        blue2 = cv2.inRange(b_seg2, 80, 120)
 
         g_seg2 = green[3000:3712,0:3712]
-        green2 = cv2.inRange(g_seg2, 80, 255)
+        green2 = cv2.inRange(g_seg2, 80, 120)
     
         img_2 = cv2.add(blue2,green2)
     
@@ -135,10 +135,10 @@ def Load_clouds(start,end):
     
         #second segment, south pole, notable change in blue and green
         b_seg2 = blue[3000:3712,0:3712]
-        blue2 = cv2.inRange(b_seg2, 80, 255)
+        blue2 = cv2.inRange(b_seg2, 80, 120)
 
         g_seg2 = green[3000:3712,0:3712]
-        green2 = cv2.inRange(g_seg2, 80, 255)
+        green2 = cv2.inRange(g_seg2, 80, 120)
     
         img_2 = cv2.add(blue2,green2)
     
