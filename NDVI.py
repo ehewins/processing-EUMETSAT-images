@@ -28,6 +28,8 @@ regions = {
 #     br = [regions[r][3], regions[r][1]]
 #     plt.plot([tl[0], tr[0], br[0], bl[0], tl[0]],
 #              [tl[1], tr[1], br[1], bl[1], tl[1]], linewidth=2)
+# plt.xlabel("X pixel number")
+# plt.ylabel("Y piyel number")
 # plt.show()
 
 # Define dictionaries to store weekly values of the regions' properties
