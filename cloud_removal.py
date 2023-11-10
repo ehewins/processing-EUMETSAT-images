@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from scipy.signal import medfilt
 
 import file_selection
+# Import Suhail's cloud detection/thresholding code - not used in final version
+# from Load_clouds import clouds
 
 
 def weighted_time_average(window, p=4):
@@ -75,20 +77,46 @@ def single_pixel_tests():
     plt.show()
 
 
-RESULTS_DIR = 'cloud_free_images'
+# def cloud_free_average(window, cloud_pixels):
+#     """
+#     Prototype function for cloud-aware time series averaging.
+#     Doesn't work very well.
+#     """
+#     p = 1  # Values greater than 1 cause my laptop to run out of memory
+#     window = window.astype(np.uint32)
+#     weights = 1 / window ** p
+#     # Convert the ones to zeros and the zeros to ones
+#     not_cloud = np.abs(np.ones_like(cloud_pixels) - cloud_pixels)
+#     not_cloud_three_channel = np.stack((not_cloud,) * 3, axis=-1)
+#     # Set any pixel values known to be clouds to zero
+#     cloudless_window = window * not_cloud_three_channel
+#     weighted_average = np.sum(weights * cloudless_window, axis=0)
+#     weighted_average = weighted_average / \
+#         np.sum(weights * not_cloud_three_channel, axis=0)
+#     return weighted_average
 
-# # Define week-long time intervals to average over
-# week_dates = []
-# start_date = datetime(2019, 1, 1)
-# end_date = datetime(2020, 1, 1)
-# current_date = start_date
-# while current_date < end_date:
-#     week_dates.append(current_date)
-#     current_date += timedelta(weeks=1)
 
-for w in range(52):
-    time_window = file_selection.load_by_week(week=w)
-    weighted_average = weighted_time_average(time_window)
-    plt.imsave(os.path.join(RESULTS_DIR, "week_{:d}.jpg".format(w)),
-               weighted_average.astype(np.uint8))
-    print("Saved image for week {:d}".format(w))
+if __name__ == '__main__':
+
+    RESULTS_DIR = 'cloud_free_images'
+    if not os.path.exists(RESULTS_DIR):
+        os.makedirs(RESULTS_DIR)
+
+    for w in range(52):
+        time_window = file_selection.load_by_week(week=w)
+        weighted_average = weighted_time_average(time_window)
+        plt.imsave(os.path.join(RESULTS_DIR, "week_{:d}.jpg".format(w)),
+                   weighted_average.astype(np.uint8))
+        print("Saved image for week {:d}".format(w))
+
+# The follow version of the loop was used instead when testing cloud-aware
+# time series averaging. It is not used for the final result.
+
+    # for w in range(52):
+    #     time_window = file_selection.load_by_week(week=w)
+    #     detected_clouds, _ = clouds(week=w)
+    #     cloud_free = cloud_free_average(time_window, detected_clouds)
+    #     plt.imsave(os.path.join(RESULTS_DIR, "week_{:d}.jpg".format(w)),
+    #                cloud_free.astype(np.uint8))
+    #     print("Saved image for week {:d}".format(w))
+
